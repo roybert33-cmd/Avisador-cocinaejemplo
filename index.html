@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cocina - Control Blindado</title>
+    <!-- Referencia al archivo manifest.json -->
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="diseno.css">
 </head>
 <body>
@@ -20,6 +22,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+        // Registro del Service Worker para convertir en PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(() => console.log('Service Worker registrado con éxito'))
+                .catch(err => console.log('Error al registrar: ', err));
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyB9kLWRc6t7_XNBhlC10a4jmtbCntxOEYo",
