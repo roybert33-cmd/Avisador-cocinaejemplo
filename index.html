@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocina - Control Blindado</title>
+    <link rel="stylesheet" href="diseno.css">
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Panel de Cocina</h1>
+        <div id="monitor-numero-cocina" style="font-size: 50px; font-weight: bold; margin: 20px;">#0</div>
+        
+        <button class="boton-accion" onclick="siguientePedidoListo()">🔔 Avisar Siguiente Pedido</button>
+        <br><br>
+        <button onclick="reiniciarContador()" style="background-color: #666; color: white; padding: 10px; border-radius: 5px; border: none;">🔄 Reiniciar a 0</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB9kLWRc6t7_XNBhlC10a4jmtbCntxOEYo",
+            authDomain: "avisador-arayapp.firebaseapp.com",
+            databaseURL: "https://avisador-arayapp-default-rtdb.firebaseio.com",
+            projectId: "avisador-arayapp",
+            storageBucket: "avisador-arayapp.firebasestorage.app",
+            messagingSenderId: "337997002279",
+            appId: "1:337997002279:web:6dc307a6e474432e64c002"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        signInAnonymously(auth).then(() => {
+            const CLAVE_SECRETA = "MI_CLAVE_1234";
+            const CLAVE_MAESTRA = "COCINA_ROYBERT_2026";
+            let contadorGlobal = 0;
+
+            onValue(ref(db, 'don_roybert/contador_global'), (snapshot) => {
+                const data = snapshot.val();
+                contadorGlobal = (data && data.valor !== undefined) ? parseInt(data.valor) : 0;
+                document.getElementById("monitor-numero-cocina").innerText = "#" + contadorGlobal;
+            });
+
+            window.siguientePedidoListo = () => {
+                let nuevoNumero = contadorGlobal + 1;
+                set(ref(db, 'don_roybert/contador_global'), { valor: nuevoNumero, clave_maestra: CLAVE_MAESTRA });
+                set(ref(db, 'don_roybert/pedidos/' + nuevoNumero), { estado: "LISTO", timestamp: Date.now(), clave_secreta: CLAVE_SECRETA });
+            };
+
+            window.reiniciarContador = () => {
+                if(confirm("¿Seguro que quieres borrar todo?")) {
+                    set(ref(db, 'don_roybert/contador_global'), { valor: 0, clave_maestra: CLAVE_MAESTRA });
+                    set(ref(db, 'don_roybert/pedidos'), null);
+                }
+            };
+        });
+    </script>
+</body>
+</html>
