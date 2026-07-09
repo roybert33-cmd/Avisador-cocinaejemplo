@@ -11,9 +11,9 @@
         <h1>Panel de Cocina</h1>
         <div id="monitor-numero-cocina" style="font-size: 50px; font-weight: bold; margin: 20px;">#0</div>
         
-        <button class="boton-accion" onclick="siguientePedidoListo()">🔔 Avisar Siguiente Pedido</button>
+        <button class="boton-accion" onclick="window.siguientePedidoListo()">🔔 Avisar Siguiente Pedido</button>
         <br><br>
-        <button onclick="reiniciarContador()" style="background-color: #666; color: white; padding: 10px; border-radius: 5px; border: none;">🔄 Reiniciar a 0</button>
+        <button onclick="window.reiniciarContador()" style="background-color: #666; color: white; padding: 10px; border-radius: 5px; border: none; cursor: pointer;">🔄 Reiniciar a 0</button>
     </div>
 
     <script type="module">
@@ -44,6 +44,7 @@
                 document.getElementById("monitor-numero-cocina").innerText = "#" + contadorGlobal;
             });
 
+            // Funciones globales para que el botón de tu diseño funcione
             window.siguientePedidoListo = () => {
                 let nuevoNumero = contadorGlobal + 1;
                 set(ref(db, 'don_roybert/contador_global'), { valor: nuevoNumero });
@@ -60,5 +61,4 @@
     </script>
 </body>
 </html>
-
 
