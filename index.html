@@ -10,16 +10,17 @@
     <div class="contenedor">
         <h1>Panel de Cocina</h1>
         <div id="monitor-numero-cocina" style="font-size: 50px; font-weight: bold; margin: 20px;">#0</div>
-        
+
         <button class="boton-accion" onclick="window.siguientePedidoListo()">🔔 Avisar Siguiente Pedido</button>
         <br><br>
-        <button onclick="window.reiniciarContador()" style="background-color: #666; color: white; padding: 10px; border-radius: 5px; border: none; cursor: pointer;">🔄 Reiniciar a 0</button>
+        <button onclick="window.reiniciarContador()" style="background-color: #666; color: white; padding: 10px; border-radius: 5px;">🔄 Reiniciar Contador</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app-check.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB9kLWRc6t7_XNBhlC10a4jmtbCntxOEYo",
@@ -32,6 +33,13 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        
+        // Integración limpia de App Check sin alterar tus funciones
+        initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LdIQk8tAAAAALbvU1GiiIB6rcGLCD07IVGwcdMF'),
+            isTokenAutoRefreshEnabled: true
+        });
+
         const db = getDatabase(app);
         const auth = getAuth(app);
 
@@ -59,6 +67,7 @@
                     set(ref(db, 'don_roybert/pedidos'), null);
                 }
             };
+
         }).catch((error) => {
             console.error("Error en la autenticación de Firebase:", error.code, error.message);
         });
