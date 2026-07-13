@@ -34,31 +34,27 @@
 
         const app = initializeApp(firebaseConfig);
         
-        // Integración limpia de App Check sin alterar tus funciones
         initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider('6LdIQk8tAAAAALbvU1GiiIB6rcGLCD07IVGwcdMF'),
+            provider: new ReCaptchaV3Provider('6LcPPFEtAAAAAIVtKgVFo1jtAQWRESDHHnCjMKaE'),
             isTokenAutoRefreshEnabled: true
         });
 
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        // Iniciamos sesión anónima para cumplir con las reglas "auth != null"
         signInAnonymously(auth).then(() => {
             let contadorGlobal = 0;
 
-            // Escuchamos el contador en tiempo real
             onValue(ref(db, 'don_roybert/contador_global'), (snapshot) => {
                 const data = snapshot.val();
                 contadorGlobal = (data && data.valor !== undefined) ? parseInt(data.valor) : 0;
                 document.getElementById("monitor-numero-cocina").innerText = "#" + contadorGlobal;
             });
 
-            // Funciones globales para que los botones interactúen correctamente
             window.siguientePedidoListo = () => {
                 let nuevoNumero = contadorGlobal + 1;
-                set(ref(db, 'don_roybert/contador_global'), { valor: nuevoNumero });
-                set(ref(db, 'don_roybert/pedidos/' + nuevoNumero), { estado: "LISTO", timestamp: Date.now() });
+                set(ref(db, 'don_roybert/contador_global'), { valor: nuevoNumero }).catch(e => console.error(e));
+                set(ref(db, 'don_roybert/pedidos/' + nuevoNumero), { estado: "LISTO", timestamp: Date.now() }).catch(e => console.error("Error enviando:", e));
             };
 
             window.reiniciarContador = () => {
